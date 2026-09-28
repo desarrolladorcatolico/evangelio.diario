@@ -32,7 +32,7 @@ jobs:
 
       - name: Generar Evangelio
         run: |
-          python extractor_evangelio_html_whatsapp.py --salida index.html
+          python evangelio.py --salida index.html
 
       - name: Guardar página generada
         run: |
