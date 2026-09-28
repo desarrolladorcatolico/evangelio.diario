@@ -4,6 +4,7 @@ import re
 from datetime import date
 from pathlib import Path
 from urllib.request import Request, urlopen
+from urllib.parse import quote
 
 from bs4 import BeautifulSoup, Tag
 from html import escape
@@ -148,6 +149,19 @@ def make_html(output, evangelista, cita, evangelio, pensamientos):
     pensamientos_html = "\n".join(
         f'<div class="thought"><span class="bullet">•</span><p>{escape(p)}</p></div>'
         for p in pensamientos
+    mensaje_whatsapp = (
+       f"*✠ Santo Evangelio según san {evangelista}* ({cita})"
+       f"\n\n{evangelio}"
+       f"\n\n_Palabra del Señor._"
+       f"\n\n*Pensamientos para el Evangelio de hoy*"
+       f"\n\n" +
+       "\n\n".join(f"• {p}" for p in pensamientos)
+)
+
+whatsapp_url = (
+    "https://api.whatsapp.com/send?text="
+    + quote(mensaje_whatsapp)
+)
     )
 
     html = f"""<!doctype html>
@@ -193,48 +207,11 @@ footer {{ text-align:center; color:var(--muted); font:0.8rem Arial,sans-serif; m
   <h2>Pensamientos para el Evangelio de hoy</h2>
   {pensamientos_html}
 </section>
-<button class="share" type="button" onclick="compartirWhatsApp()">Compartir por WhatsApp</button>
+<a atsapp_url}
+   📤 Compartir por WhatsApp
+</a>
 </main>
-<script>
-function compartirWhatsApp() {{
 
-    const titulo =
-        '✠ Santo Evangelio según san ' +
-        document.querySelector('h1')
-            .innerText
-            .replace('Santo Evangelio según san ', '') +
-        ' ' +
-        document.querySelector('.cita').innerText;
-
-    const evangelio = Array
-        .from(document.querySelectorAll('.gospel p'))
-        .map(p => p.innerText.trim())
-        .filter(Boolean)
-        .join('\n\n');
-
-    const pensamientos = Array
-        .from(document.querySelectorAll('.thought p'))
-        .map(p => '• ' + p.innerText.trim())
-        .join('\n\n');
-
-    const mensaje =
-        '*' + titulo + '*' +
-        '\n\n' +
-        evangelio +
-        '\n\n' +
-        '_Palabra del Señor._' +
-        '\n\n' +
-        '*Pensamientos para el Evangelio de hoy*' +
-        '\n\n' +
-        pensamientos;
-
-    const url =
-        'https://api.whatsapp.com/send?text=' +
-        encodeURIComponent(mensaje);
-
-    window.open(url, '_blank');
-}}
-</script>
 </body>
 </html>
 """
