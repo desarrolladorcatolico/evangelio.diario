@@ -200,7 +200,7 @@ footer {{ text-align:center; color:var(--muted); font:0.8rem Arial,sans-serif; m
 <hr class="separator">
 <section><h2>Pensamientos para el Evangelio de hoy</h2>{pensamientos_html}</section>
 <a class="share" href="{escape(whatsapp_url, quote=True)}" target="_blank" rel="noopener noreferrer">📤 Compartir por WhatsApp</a>
-<footer>Evangelio: Don Bosco Argentina · Pensamientos: Evangeli.net</footer>
+<footer>Desarrollador Católico © 2026</footer>
 </main>
 </body>
 </html>
