@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Evangelio del día</title>
+<style>
+:root { --ink:#252525; --muted:#6c665d; --accent:#8b2635; --paper:#fffdf8; --line:#e8dfd2; }
+* { box-sizing:border-box; }
+body { margin:0; background:#f3eee6; color:var(--ink); font-family:Georgia, 'Times New Roman', serif; line-height:1.62; }
+main { max-width:760px; margin:0 auto; min-height:100vh; background:var(--paper); padding:28px 20px 44px; }
+header { text-align:center; margin-bottom:26px; }
+.cross { color:var(--accent); font-size:30px; line-height:1; }
+h1 { font-size:clamp(1.35rem,5vw,2rem); line-height:1.22; margin:10px 0 5px; }
+.cita { color:var(--muted); font-style:italic; font-size:1.05rem; }
+.gospel p { margin:0 0 16px; font-size:1.08rem; }
+.word { text-align:center; font-style:italic; font-weight:600; margin:28px 0; }
+.separator { width:68px; height:2px; background:var(--accent); margin:28px auto; border:0; }
+h2 { color:var(--accent); text-align:center; font-size:1.18rem; margin:0 0 22px; }
+.thought { display:flex; gap:10px; padding:14px 0; border-bottom:1px solid var(--line); }
+.thought:last-child { border-bottom:0; }
+.thought p { margin:0; }
+.bullet { color:var(--accent); font-size:1.35rem; line-height:1.35; }
+.share { display:block; width:100%; margin:30px 0 12px; padding:14px 18px; border:0; border-radius:14px; background:#25D366; color:#fff; font:bold 1rem Arial,sans-serif; text-align:center; text-decoration:none; cursor:pointer; box-shadow:0 5px 16px rgba(37,211,102,.22); }
+.share:active { transform:scale(.99); }
+footer { text-align:center; color:var(--muted); font:0.8rem Arial,sans-serif; margin-top:24px; }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="cross">✠</div>
+  <h1>Santo Evangelio según san Lucas</h1>
+  <div class="cita">(9, 46-50)</div>
+</header>
+<section class="gospel"><p>Entonces se les ocurrió preguntarse quién sería el más grande. Pero Jesús, conociendo sus pensamientos, tomó a un niño y acercándolo, les dijo: «El que recibe a este niño en mi Nombre, me recibe a mí, y el que me recibe a mí, recibe a aquel que me envió; porque el más pequeño de ustedes, ese es el más grande».</p>
+<p>Juan, dirigiéndose a Jesús, le dijo: «Maestro, hemos visto a uno que expulsaba demonios en tu Nombre y tratamos de impedírselo, porque no es de los nuestros».</p>
+<p>Pero Jesús le dijo: «No se lo impidan, porque el que no está contra ustedes, está con ustedes».</p></section>
+<div class="word">Palabra del Señor.</div>
+<hr class="separator">
+<section>
+  <h2>Pensamientos para el Evangelio de hoy</h2>
+  <div class="thought"><span class="bullet">•</span><p>«Es mejor ser cristiano sin decirlo, que decirlo sin serlo. Es una cosa óptima enseñar, pero a condición de que se practique lo que se enseña» (San Ignacio de Antioquía)</p></div>
+<div class="thought"><span class="bullet">•</span><p>«A menudo nos comportamos como controladores de la gracia y no como facilitadores. Pero la Iglesia no es una aduana» (Francisco)</p></div>
+<div class="thought"><span class="bullet">•</span><p>«Extraordinarios o sencillos y humildes, los carismas son gracias del Espíritu Santo, que tienen directa o indirectamente, una utilidad eclesial; los carismas están ordenados a la edificación de la Iglesia, al bien de los hombres y a las necesidades del mundo» (Catecismo de la Iglesia Católica, nº 799)</p></div>
+</section>
+<button class="share" type="button" onclick="compartirWhatsApp()">Compartir por WhatsApp</button>
+<footer>Evangelio: Don Bosco Argentina · Pensamientos: Evangeli.net</footer>
+</main>
+<script>
+function compartirWhatsApp() {
+  const titulo = `✠ Santo Evangelio según san Lucas (9, 46-50)`;
+  const evangelio = '';
+  const gospelParas = Array.from(document.querySelectorAll('.gospel p')).map(p => p.innerText.trim()).filter(Boolean).join('
+
+');
+  const pensamientos = Array.from(document.querySelectorAll('.thought p')).map(p => '• ' + p.innerText.trim()).join('
+
+');
+  const mensaje = `*${titulo}*
+
+${gospelParas}
+
+_Palabra del Señor._
+
+*Pensamientos para el Evangelio de hoy*
+
+${pensamientos}`;
+  window.location.href = 'https://wa.me/?text=' + encodeURIComponent(mensaje);
+}
+</script>
+</body>
+</html>
