@@ -194,7 +194,6 @@ footer {{ text-align:center; color:var(--muted); font:0.8rem Arial,sans-serif; m
   {pensamientos_html}
 </section>
 <button class="share" type="button" onclick="compartirWhatsApp()">Compartir por WhatsApp</button>
-<footer>Evangelio: Don Bosco Argentina · Pensamientos: Evangeli.net</footer>
 </main>
 <script>
 function compartirWhatsApp() {{
