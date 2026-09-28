@@ -1,0 +1,43 @@
+name: Actualizar Evangelio diario
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "30 10 * * *"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+
+  generar:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+
+      - name: Generar Evangelio
+        run: |
+          python extractor_evangelio_html_whatsapp.py --salida index.html
+
+      - name: Guardar página generada
+        run: |
+          git config user.name "Evangelio Bot"
+          git config user.email "actions@github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Actualizar Evangelio diario"
+          git push
