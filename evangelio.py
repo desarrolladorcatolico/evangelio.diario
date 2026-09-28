@@ -144,78 +144,268 @@ def extract_evangeli_thoughts(html):
 
 
 def make_html(output, evangelista, cita, evangelio, pensamientos):
-    bloques = [b.strip() for b in evangelio.split('\n\n') if b.strip()]
-    evangelio_html = "\n".join(f"<p>{escape(b)}</p>" for b in bloques)
-    pensamientos_html = "\n".join(
-        f'<div class="thought"><span class="bullet">•</span><p>{escape(p)}</p></div>'
-        for p in pensamientos
-    mensaje_whatsapp = (
-       f"*✠ Santo Evangelio según san {evangelista}* ({cita})"
-       f"\n\n{evangelio}"
-       f"\n\n_Palabra del Señor._"
-       f"\n\n*Pensamientos para el Evangelio de hoy*"
-       f"\n\n" +
-       "\n\n".join(f"• {p}" for p in pensamientos)
-)
 
-whatsapp_url = (
-    "https://api.whatsapp.com/send?text="
-    + quote(mensaje_whatsapp)
-)
+    bloques = [
+        b.strip()
+        for b in evangelio.split('\n\n')
+        if b.strip()
+    ]
+
+    evangelio_html = "\n".join(
+        f"<p>{escape(b)}</p>"
+        for b in bloques
+    )
+
+    pensamientos_html = "\n".join(
+        f'<div class="thought">'
+        f'<span class="bullet">•</span>'
+        f'<p>{escape(p)}</p>'
+        f'</div>'
+        for p in pensamientos
+    )
+
+    # Mensaje que se enviará a WhatsApp
+    mensaje_whatsapp = (
+        f"*✠ Santo Evangelio según san {evangelista}* ({cita})"
+        f"\n\n{evangelio}"
+        f"\n\n_Palabra del Señor._"
+        f"\n\n*Pensamientos para el Evangelio de hoy*"
+        f"\n\n"
+        + "\n\n".join(
+            f"• {p}"
+            for p in pensamientos
+        )
+    )
+
+    # Convertimos el mensaje en una URL válida
+    whatsapp_url = (
+        "https://api.whatsapp.com/send?text="
+        + quote(mensaje_whatsapp, safe="")
     )
 
     html = f"""<!doctype html>
 <html lang="es">
+
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+>
+
 <meta name="color-scheme" content="light">
+
 <title>Evangelio del día</title>
+
 <style>
-:root {{ --ink:#252525; --muted:#6c665d; --accent:#8b2635; --paper:#fffdf8; --line:#e8dfd2; }}
-* {{ box-sizing:border-box; }}
-body {{ margin:0; background:#f3eee6; color:var(--ink); font-family:Georgia, 'Times New Roman', serif; line-height:1.62; }}
-main {{ max-width:760px; margin:0 auto; min-height:100vh; background:var(--paper); padding:28px 20px 44px; }}
-header {{ text-align:center; margin-bottom:26px; }}
-.cross {{ color:var(--accent); font-size:30px; line-height:1; }}
-h1 {{ font-size:clamp(1.35rem,5vw,2rem); line-height:1.22; margin:10px 0 5px; }}
-.cita {{ color:var(--muted); font-style:italic; font-size:1.05rem; }}
-.gospel p {{ margin:0 0 16px; font-size:1.08rem; }}
-.word {{ text-align:center; font-style:italic; font-weight:600; margin:28px 0; }}
-.separator {{ width:68px; height:2px; background:var(--accent); margin:28px auto; border:0; }}
-h2 {{ color:var(--accent); text-align:center; font-size:1.18rem; margin:0 0 22px; }}
-.thought {{ display:flex; gap:10px; padding:14px 0; border-bottom:1px solid var(--line); }}
-.thought:last-child {{ border-bottom:0; }}
-.thought p {{ margin:0; }}
-.bullet {{ color:var(--accent); font-size:1.35rem; line-height:1.35; }}
-.share {{ display:block; width:100%; margin:30px 0 12px; padding:14px 18px; border:0; border-radius:14px; background:#25D366; color:#fff; font:bold 1rem Arial,sans-serif; text-align:center; text-decoration:none; cursor:pointer; box-shadow:0 5px 16px rgba(37,211,102,.22); }}
-.share:active {{ transform:scale(.99); }}
-footer {{ text-align:center; color:var(--muted); font:0.8rem Arial,sans-serif; margin-top:24px; }}
+
+:root {{
+    --ink:#252525;
+    --muted:#6c665d;
+    --accent:#8b2635;
+    --paper:#fffdf8;
+    --line:#e8dfd2;
+}}
+
+* {{
+    box-sizing:border-box;
+}}
+
+body {{
+    margin:0;
+    background:#f3eee6;
+    color:var(--ink);
+    font-family:Georgia, 'Times New Roman', serif;
+    line-height:1.62;
+}}
+
+main {{
+    max-width:760px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--paper);
+    padding:28px 20px 44px;
+}}
+
+header {{
+    text-align:center;
+    margin-bottom:26px;
+}}
+
+.cross {{
+    color:var(--accent);
+    font-size:30px;
+    line-height:1;
+}}
+
+h1 {{
+    font-size:clamp(1.35rem,5vw,2rem);
+    line-height:1.22;
+    margin:10px 0 5px;
+}}
+
+.cita {{
+    color:var(--muted);
+    font-style:italic;
+    font-size:1.05rem;
+}}
+
+.gospel p {{
+    margin:0 0 16px;
+    font-size:1.08rem;
+}}
+
+.word {{
+    text-align:center;
+    font-style:italic;
+    font-weight:600;
+    margin:28px 0;
+}}
+
+.separator {{
+    width:68px;
+    height:2px;
+    background:var(--accent);
+    margin:28px auto;
+    border:0;
+}}
+
+h2 {{
+    color:var(--accent);
+    text-align:center;
+    font-size:1.18rem;
+    margin:0 0 22px;
+}}
+
+.thought {{
+    display:flex;
+    gap:10px;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+}}
+
+.thought:last-child {{
+    border-bottom:0;
+}}
+
+.thought p {{
+    margin:0;
+}}
+
+.bullet {{
+    color:var(--accent);
+    font-size:1.35rem;
+    line-height:1.35;
+}}
+
+.share {{
+    display:block;
+    width:100%;
+    margin:30px 0 12px;
+    padding:14px 18px;
+
+    border-radius:14px;
+
+    background:#25D366;
+    color:white;
+
+    font:bold 1rem Arial,sans-serif;
+
+    text-align:center;
+    text-decoration:none;
+
+    box-shadow:
+        0 5px 16px rgba(37,211,102,.22);
+}}
+
+.share:active {{
+    transform:scale(.99);
+}}
+
+footer {{
+    text-align:center;
+    color:var(--muted);
+    font:0.8rem Arial,sans-serif;
+    margin-top:24px;
+}}
+
 </style>
+
 </head>
+
 <body>
+
 <main>
+
 <header>
-  <div class="cross">✠</div>
-  <h1>Santo Evangelio según san {escape(evangelista)}</h1>
-  <div class="cita">({escape(cita)})</div>
+
+    <div class="cross">✠</div>
+
+    <h1>
+        Santo Evangelio según san {escape(evangelista)}
+    </h1>
+
+    <div class="cita">
+        ({escape(cita)})
+    </div>
+
 </header>
-<section class="gospel">{evangelio_html}</section>
-<div class="word">Palabra del Señor.</div>
-<hr class="separator">
-<section>
-  <h2>Pensamientos para el Evangelio de hoy</h2>
-  {pensamientos_html}
+
+
+<section class="gospel">
+
+{evangelio_html}
+
 </section>
-<a atsapp_url}
-   📤 Compartir por WhatsApp
+
+
+<div class="word">
+
+Palabra del Señor.
+
+</div>
+
+
+<hr class="separator">
+
+
+<section>
+
+<h2>
+Pensamientos para el Evangelio de hoy
+</h2>
+
+{pensamientos_html}
+
+</section>
+
+
+{escape(whatsapp_url, quote=True)}
+📤 Compartir por WhatsApp
 </a>
+
+
+<footer>
+
+Evangelio: Don Bosco Argentina ·
+Pensamientos: Evangeli.net
+
+</footer>
+
+
 </main>
 
 </body>
+
 </html>
 """
-    Path(output).write_text(html, encoding='utf-8')
+
+    Path(output).write_text(
+        html,
+        encoding='utf-8'
+    )
 
 def main():
     parser = argparse.ArgumentParser(
