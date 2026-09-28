@@ -196,13 +196,43 @@ footer {{ text-align:center; color:var(--muted); font:0.8rem Arial,sans-serif; m
 <button class="share" type="button" onclick="compartirWhatsApp()">Compartir por WhatsApp</button>
 </main>
 <script>
-function compartirWhatsApp() {{
-  const titulo = `✠ Santo Evangelio según san {escape(evangelista)} ({escape(cita)})`;
-  const evangelio = {repr(chr(10).join(b.strip() for b in []))};
-  const gospelParas = Array.from(document.querySelectorAll('.gospel p')).map(p => p.innerText.trim()).filter(Boolean).join('\n\n');
-  const pensamientos = Array.from(document.querySelectorAll('.thought p')).map(p => '• ' + p.innerText.trim()).join('\n\n');
-  const mensaje = `*${{titulo}}*\n\n${{gospelParas}}\n\n_Palabra del Señor._\n\n*Pensamientos para el Evangelio de hoy*\n\n${{pensamientos}}`;
-  window.location.href = 'https://wa.me/?text=' + encodeURIComponent(mensaje);
+function compartirWhatsApp() {
+
+    const titulo =
+        '✠ Santo Evangelio según san ' +
+        document.querySelector('h1')
+            .innerText
+            .replace('Santo Evangelio según san ', '') +
+        ' ' +
+        document.querySelector('.cita').innerText;
+
+    const evangelio = Array
+        .from(document.querySelectorAll('.gospel p'))
+        .map(p => p.innerText.trim())
+        .filter(Boolean)
+        .join('\n\n');
+
+    const pensamientos = Array
+        .from(document.querySelectorAll('.thought p'))
+        .map(p => '• ' + p.innerText.trim())
+        .join('\n\n');
+
+    const mensaje =
+        '*' + titulo + '*' +
+        '\n\n' +
+        evangelio +
+        '\n\n' +
+        '_Palabra del Señor._' +
+        '\n\n' +
+        '*Pensamientos para el Evangelio de hoy*' +
+        '\n\n' +
+        pensamientos;
+
+    const url =
+        'https://api.whatsapp.com/send?text=' +
+        encodeURIComponent(mensaje);
+
+    window.open(url, '_blank');
 }}
 </script>
 </body>
