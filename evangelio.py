@@ -196,7 +196,7 @@ footer {{ text-align:center; color:var(--muted); font:0.8rem Arial,sans-serif; m
 <button class="share" type="button" onclick="compartirWhatsApp()">Compartir por WhatsApp</button>
 </main>
 <script>
-function compartirWhatsApp() {
+function compartirWhatsApp() {{
 
     const titulo =
         '✠ Santo Evangelio según san ' +
