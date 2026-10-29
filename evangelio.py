@@ -16,7 +16,7 @@ EVANGELI_URL = 'https://evangeli.net/evangelio'
 UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/123 Safari/537.36'
 TIMEZONE = 'America/Argentina/La_Rioja'
 DEFAULT_RETRIES = 8
-DEFAULT_RETRY_MINUTES = 30
+DEFAULT_RETRY_MINUTES = 15
 
 EVANGELISTAS = {'Mt': 'Mateo', 'Mc': 'Marcos', 'Lc': 'Lucas', 'Jn': 'Juan'}
 MESES = {
@@ -242,8 +242,8 @@ def obtain_current_content(max_attempts, retry_minutes):
 def main():
     parser = argparse.ArgumentParser(description='Evangelio Don Bosco + pensamientos Evangeli.net con validación y reintentos.')
     parser.add_argument('--salida', default='evangelio.html', help='Nombre del HTML de salida.')
-    parser.add_argument('--reintentos', type=int, default=DEFAULT_RETRIES, help='Cantidad total de intentos. Por defecto: 4.')
-    parser.add_argument('--minutos-reintento', type=int, default=DEFAULT_RETRY_MINUTES, help='Minutos entre intentos. Por defecto: 30.')
+    parser.add_argument('--reintentos', type=int, default=DEFAULT_RETRIES, help='Cantidad total de intentos. Por defecto: 8.')
+    parser.add_argument('--minutos-reintento', type=int, default=DEFAULT_RETRY_MINUTES, help='Minutos entre intentos. Por defecto: 15.')
     args = parser.parse_args()
 
     if args.reintentos < 1:
