@@ -21,6 +21,14 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v5
 
+      - name: Mostrar fecha y hora
+        run: |
+          echo "UTC:"
+          date -u
+          echo ""
+          echo "Runner:"
+          date
+
       - name: Preparar Python
         uses: actions/setup-python@v6
         with:
@@ -34,10 +42,27 @@ jobs:
         run: |
           python evangelio.py --salida index.html
 
+      - name: Detectar cambios
+        id: cambios
+        run: |
+          git add index.html
+
+          if git diff --cached --quiet; then
+            echo "hay_cambios=false" >> $GITHUB_OUTPUT
+            echo "Sin cambios."
+          else
+            echo "hay_cambios=true" >> $GITHUB_OUTPUT
+            echo "Hay cambios."
+          fi
+
       - name: Guardar página generada
+        if: steps.cambios.outputs.hay_cambios == 'true'
         run: |
           git config user.name "Evangelio Bot"
           git config user.email "actions@github.com"
-          git add index.html
-          git diff --cached --quiet || git commit -m "Actualizar Evangelio diario"
+          git commit -m "Actualizar Evangelio diario"
           git push
+
+      - name: Resumen
+        run: |
+          echo "Workflow finalizado."
