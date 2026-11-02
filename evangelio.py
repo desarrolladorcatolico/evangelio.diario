@@ -71,50 +71,137 @@ def extract_evangeli_date(html):
 
 
 def extract_donbosco_gospel(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    heading = next((t for t in soup.find_all(['h1', 'h2', 'h3'])
-                    if clean(t.get_text(' ', strip=True)).lower() == 'evangelio del dia'), None)
-    if heading is None:
-        raise RuntimeError('No encontré el título "Evangelio del Dia" en Don Bosco.')
+    soup = BeautifulSoup(html, "html.parser")
 
-    citation_tag = citation_match = None
+    # ---------------------------------------------------
+    # Buscar encabezado de Evangelio de forma flexible
+    # ---------------------------------------------------
+    heading = None
+
+    for tag in soup.find_all(["h1", "h2", "h3", "h4", "strong"]):
+        texto = clean(tag.get_text(" ", strip=True)).lower()
+
+        if (
+            "evangelio del dia" in texto
+            or "evangelio del día" in texto
+            or texto == "evangelio"
+        ):
+            heading = tag
+            break
+
+    if heading is None:
+        raise RuntimeError(
+            'No encontré la sección "Evangelio" en Don Bosco.'
+        )
+
+    # ---------------------------------------------------
+    # Buscar la cita bíblica
+    # ---------------------------------------------------
+    citation_tag = None
+    citation_match = None
+
+    patron_cita = re.compile(
+        r"(Mt|Mc|Lc|Jn)\.?\s*([0-9]+\s*,\s*[0-9.\-–]+)",
+        re.I,
+    )
+
     for el in heading.find_all_next():
+
         if not isinstance(el, Tag):
             continue
-        if el.name in ['h1', 'h2', 'h3'] and el is not heading:
-            if clean(el.get_text(' ', strip=True)).lower() == 'la palabra me dice':
-                break
-        text = clean(el.get_text(' ', strip=True))
-        m = re.fullmatch(
-            r'(Mt|Mc|Lc|Jn)\.?\s*([0-9]+\s*,\s*[0-9]+(?:\s*[-–]\s*[0-9]+)?)',
-            text, re.I
-        )
+
+        texto = clean(el.get_text(" ", strip=True))
+
+        # Fin de la sección evangelio
+        if "la palabra me dice" in texto.lower():
+            break
+
+        m = patron_cita.search(texto)
+
         if m:
-            citation_tag, citation_match = el, m
+            citation_tag = el
+            citation_match = m
             break
 
     if citation_tag is None:
-        raise RuntimeError('No pude localizar la cita bíblica en Don Bosco.')
 
-    abrev = citation_match.group(1).title()
-    evangelista = EVANGELISTAS.get(abrev, abrev)
-    cita = re.sub(r'\s*[-–]\s*', '-', re.sub(r'\s*,\s*', ', ', citation_match.group(2)))
+        print("\n=== DEPURACIÓN CITA DON BOSCO ===")
 
-    paragraphs = []
-    for el in citation_tag.find_all_next(['p', 'h1', 'h2', 'h3']):
-        if el.name in ['h1', 'h2', 'h3']:
-            if clean(el.get_text(' ', strip=True)).lower() == 'la palabra me dice':
+        contador = 0
+
+        for el in heading.find_all_next():
+
+            if not isinstance(el, Tag):
+                continue
+
+            texto = clean(el.get_text(" ", strip=True))
+
+            if texto:
+                print(repr(texto[:150]))
+                contador += 1
+
+            if contador >= 20:
                 break
+
+        raise RuntimeError(
+            "No pude localizar la cita bíblica en Don Bosco."
+        )
+
+    # ---------------------------------------------------
+    # Interpretar evangelista
+    # ---------------------------------------------------
+    abrev = citation_match.group(1).title()
+
+    evangelista = EVANGELISTAS.get(
+        abrev,
+        abrev,
+    )
+
+    cita = clean(citation_match.group(2))
+
+    # normalizaciones
+    cita = re.sub(r"\s*,\s*", ", ", cita)
+    cita = re.sub(r"\s*[-–]\s*", "-", cita)
+
+    # ---------------------------------------------------
+    # Extraer párrafos
+    # ---------------------------------------------------
+    paragraphs = []
+
+    for el in citation_tag.find_all_next():
+
+        if not isinstance(el, Tag):
             continue
-        text = clean(el.get_text(' ', strip=True))
-        if text and text not in paragraphs:
-            paragraphs.append(text)
 
-    evangelio = '\n\n'.join(paragraphs).strip()
+        texto = clean(el.get_text(" ", strip=True))
+
+        if not texto:
+            continue
+
+        if "la palabra me dice" in texto.lower():
+            break
+
+        if texto == citation_tag.get_text(" ", strip=True):
+            continue
+
+        if len(texto) < 10:
+            continue
+
+        if texto not in paragraphs:
+            paragraphs.append(texto)
+
+    evangelio = "\n\n".join(paragraphs).strip()
+
     if len(evangelio) < 80:
-        raise RuntimeError('El Evangelio extraído de Don Bosco parece incompleto.')
-    return evangelista, cita, evangelio
 
+        print("\n=== EVANGELIO EXTRAÍDO ===")
+        print(evangelio)
+
+        raise RuntimeError(
+            "El Evangelio extraído de Don Bosco parece incompleto."
+        )
+
+    return evangelista, cita, evangelio
 
 def extract_evangeli_thoughts(html):
     soup = BeautifulSoup(html, 'html.parser')
