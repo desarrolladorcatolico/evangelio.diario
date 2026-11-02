@@ -15,8 +15,8 @@ DONBOSCO_URL = 'https://donbosco.org.ar/home/evangelio'
 EVANGELI_URL = 'https://evangeli.net/evangelio'
 UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/123 Safari/537.36'
 TIMEZONE = 'America/Argentina/La_Rioja'
-DEFAULT_RETRIES = 8
-DEFAULT_RETRY_MINUTES = 15
+DEFAULT_RETRIES = 12
+DEFAULT_RETRY_MINUTES = 30
 
 EVANGELISTAS = {'Mt': 'Mateo', 'Mc': 'Marcos', 'Lc': 'Lucas', 'Jn': 'Juan'}
 MESES = {
@@ -101,8 +101,8 @@ def extract_donbosco_gospel(html):
     citation_match = None
 
     patron_cita = re.compile(
-        r"(Mt|Mc|Lc|Jn)\.?\s*([0-9]+\s*,\s*[0-9.\-–]+)",
-        re.I,
+    r"\b(Mt|Mc|Lc|Jn)\.?\s*([0-9]+\s*,\s*[0-9.\-– ]+)",
+    re.I,
     )
 
     for el in heading.find_all_next():
@@ -140,7 +140,7 @@ def extract_donbosco_gospel(html):
                 print(repr(texto[:150]))
                 contador += 1
 
-            if contador >= 20:
+           if contador >= 20:
                 break
 
         raise RuntimeError(
@@ -184,7 +184,7 @@ def extract_donbosco_gospel(html):
         if texto == citation_tag.get_text(" ", strip=True):
             continue
 
-        if len(texto) < 10:
+       if len(texto) < 10:
             continue
 
         if texto not in paragraphs:
@@ -202,6 +202,19 @@ def extract_donbosco_gospel(html):
         )
 
     return evangelista, cita, evangelio
+
+raise RuntimeError(
+    "No pude localizar la cita bíblica en Don Bosco."
+)
+
+
+Path("debug_donbosco.html").write_text(
+    html,
+    encoding="utf-8"
+)
+
+print("HTML guardado en debug_donbosco.html")
+``
 
 def extract_evangeli_thoughts(html):
     soup = BeautifulSoup(html, 'html.parser')
@@ -297,6 +310,9 @@ footer {{ text-align:center; color:var(--muted); font:0.8rem Arial,sans-serif; m
 
 def obtain_current_content(max_attempts, retry_minutes):
     argentina = ZoneInfo(TIMEZONE)
+
+    print("Timezone configurada:", TIMEZONE)
+    print("Hora Argentina:", datetime.now(argentina))
 
     for attempt in range(1, max_attempts + 1):
         now = datetime.now(argentina)
