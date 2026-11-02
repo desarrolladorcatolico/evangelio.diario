@@ -125,6 +125,11 @@ def extract_donbosco_gospel(html):
 
     if citation_tag is None:
 
+        print(
+        "ADVERTENCIA: no se encontró cita bíblica. "
+        "Intentando extraer igualmente el Evangelio."
+        )
+
         print("\n=== DEPURACIÓN CITA DON BOSCO ===")
 
         contador = 0
