@@ -15,8 +15,8 @@ DONBOSCO_URL = 'https://donbosco.org.ar/home/evangelio'
 EVANGELI_URL = 'https://evangeli.net/evangelio'
 UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/123 Safari/537.36'
 TIMEZONE = 'America/Argentina/La_Rioja'
-DEFAULT_RETRIES = 12
-DEFAULT_RETRY_MINUTES = 30
+DEFAULT_RETRIES = 3
+DEFAULT_RETRY_MINUTES = 5
 
 EVANGELISTAS = {'Mt': 'Mateo', 'Mc': 'Marcos', 'Lc': 'Lucas', 'Jn': 'Juan'}
 MESES = {
