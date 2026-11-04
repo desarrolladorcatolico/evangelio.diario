@@ -360,11 +360,10 @@ def extract_donbosco_gospel(html):
         evangelio = "\n\n".join(paragraphs).strip()
     
         if len(evangelio) < 80:
+            print("\n=== EVANGELIO EXTRAÍDO ===")
+            print(evangelio)
 
-        print("\n=== EVANGELIO EXTRAÍDO ===")
-        print(evangelio)
-
-        raise RuntimeError(
+            raise RuntimeError(
             "El Evangelio extraído de Don Bosco parece incompleto."
         )
 
