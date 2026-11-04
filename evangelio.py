@@ -196,22 +196,22 @@ def extract_donbosco_gospel(html):
 
     for el in citation_tag.find_all_next():
 
-    if not isinstance(el, Tag):
-        continue
-
-    texto = clean(el.get_text(" ", strip=True))
-
-    # Evita volver a agregar la referencia bíblica
-    if patron_cita.search(texto):
-        continue
-
-    if not texto:
-        continue
-
-            if texto == referencia_texto:
+        if not isinstance(el, Tag):
             continue
 
-            if len(texto) < 10:
+        texto = clean(el.get_text(" ", strip=True))
+
+        # Evita volver a agregar la referencia bíblica
+        if patron_cita.search(texto):
+            continue
+
+        if not texto:
+        continue
+
+        if texto == referencia_texto:
+            continue
+
+        if len(texto) < 10:
             continue
 
         texto_lower = texto.lower()
