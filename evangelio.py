@@ -189,7 +189,7 @@ def extract_donbosco_gospel(html):
         if texto == citation_tag.get_text(" ", strip=True):
             continue
 
-       if len(texto) < 10:
+        if len(texto) < 10:
             continue
 
         if texto not in paragraphs:
