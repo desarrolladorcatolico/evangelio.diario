@@ -43,7 +43,11 @@ def parse_spanish_date(text, with_de):
         pattern = day + r'\s+(\d{1,2})\s+de\s+([A-Za-záéíóúñ]+)\s+de\s+(\d{4})'
     else:
         pattern = day + r'\s+(\d{1,2})\s+([A-Za-záéíóúñ]+)\s+(\d{4})'
-    m = re.search(pattern, text, re.I)
+    m = re.search(
+    r"\b(Mt|Mc|Lc|Jn)\.?\s*(\d+\s*,\s*[\d\-–]+)",
+    texto,
+    re.I,
+    )
     if not m:
         return None
     month = MESES.get(m.group(2).lower())
@@ -74,7 +78,7 @@ def extract_donbosco_gospel(html):
     soup = BeautifulSoup(html, "html.parser")
 
     # ---------------------------------------------------
-    # Buscar encabezado de Evangelio de forma flexible
+    # Buscar encabezado de Evangelio
     # ---------------------------------------------------
     heading = None
 
@@ -95,13 +99,138 @@ def extract_donbosco_gospel(html):
         )
 
     # ---------------------------------------------------
+    # Buscar cita bíblica
+    # ---------------------------------------------------
+    citation_tag = None
+    citation_match = None
+
+    patron_cita = re.compile(
+        r"\b(Mt|Mc|Lc|Jn)\.?\s*(\d+\s*,\s*[\d\-–., ]+)",
+        re.I,
+    )
+
+    for el in heading.find_all_next():
+
+        if not isinstance(el, Tag):
+            continue
+
+        texto = clean(el.get_text(" ", strip=True))
+
+        if not texto:
+            continue
+
+        m = patron_cita.search(texto)
+
+        if m:
+            citation_tag = el
+            citation_match = m
+            break
+
+    # ---------------------------------------------------
+    # Si no encuentra la cita, mostrar depuración
+    # ---------------------------------------------------
+    if citation_tag is None:
+
+        print(
+            "ADVERTENCIA: no se encontró cita bíblica. "
+            "Intentando extraer igualmente el Evangelio."
+        )
+
+        print("\n=== DEPURACIÓN CITA DON BOSCO ===")
+
+        contador = 0
+
+        for el in heading.find_all_next():
+
+            if not isinstance(el, Tag):
+                continue
+
+            texto = clean(el.get_text(" ", strip=True))
+
+            if texto:
+                print(repr(texto[:200]))
+                contador += 1
+
+            if contador >= 100:
+                break
+
+        raise RuntimeError(
+            "No pude localizar la cita bíblica en Don Bosco."
+        )
+
+    # ---------------------------------------------------
+    # Procesar cita encontrada
+    # ---------------------------------------------------
+    abrev = citation_match.group(1).title()
+
+    evangelista = EVANGELISTAS.get(
+        abrev,
+        abrev,
+    )
+
+    cita = clean(citation_match.group(2))
+
+    cita = re.sub(r"\s*,\s*", ", ", cita)
+    cita = re.sub(r"\s*[-–]\s*", "-", cita)
+
+    # ---------------------------------------------------
+    # Extraer cuerpo del evangelio
+    # ---------------------------------------------------
+    paragraphs = []
+
+    referencia_texto = clean(
+        citation_tag.get_text(" ", strip=True)
+    )
+
+    for el in citation_tag.find_all_next():
+
+        if not isinstance(el, Tag):
+            continue
+
+        texto = clean(el.get_text(" ", strip=True))
+
+        if not texto:
+            continue
+
+        if texto == referencia_texto:
+            continue
+
+        if len(texto) < 10:
+            continue
+
+        texto_lower = texto.lower()
+
+        if (
+            "la palabra me dice" in texto_lower
+            or "reflexión" in texto_lower
+            or "meditación" in texto_lower
+        ):
+            break
+
+        if texto not in paragraphs:
+            paragraphs.append(texto)
+
+    evangelio = "\n\n".join(paragraphs).strip()
+
+    if len(evangelio) < 80:
+
+        print("\n=== EVANGELIO EXTRAÍDO ===")
+        print(evangelio)
+
+        raise RuntimeError(
+            "El Evangelio extraído de Don Bosco parece incompleto."
+        )
+
+    return evangelista, cita, evangelio
+
+    # ---------------------------------------------------
     # Buscar la cita bíblica
     # ---------------------------------------------------
     citation_tag = None
     citation_match = None
 
     patron_cita = re.compile(
-    r"\b(Mt|Mc|Lc|Jn)\.?\s*([0-9]+\s*,\s*[0-9.\-– ]+)",
+    r"\b(Mt|Mc|Lc|Jn)\.?\s*(\d+\s*,\s*[\d\-–., ]+)",
     re.I,
     )
 
@@ -145,7 +274,7 @@ def extract_donbosco_gospel(html):
                 print(repr(texto[:150]))
                 contador += 1
 
-            if contador >= 20:
+            if contador >= 100:
                 break
 
         raise RuntimeError(
