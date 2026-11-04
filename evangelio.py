@@ -196,6 +196,14 @@ def extract_donbosco_gospel(html):
 
     for el in citation_tag.find_all_next():
 
+        # Evita volver a agregar la referencia bíblica
+        if patron_cita.search(texto):
+        continue
+        
+        # Evita duplicados parciales
+        if texto in evangelio:
+        continue
+        
         if not isinstance(el, Tag):
             continue
 
@@ -332,7 +340,24 @@ def extract_donbosco_gospel(html):
 
         if len(texto) < 10:
             continue
+        
+        # Saltar fecha
+        if re.match(
+            r"^(lunes|martes|miércoles|miercoles|jueves|viernes|sábado|sabado|domingo)",
+            texto.lower()
+        ):
+            continue
+        
+        # Saltar cita sola
+        if re.fullmatch(
+            r"(Mt|Mc|Lc|Jn)\.?\s*\d+\s*,\s*[\d\-–]+",
+            texto,
+            re.I
+            ):
+        continue
 
+        print("AGREGANDO:", repr(texto[:80]))
+        
         if texto not in paragraphs:
             paragraphs.append(texto)
 
