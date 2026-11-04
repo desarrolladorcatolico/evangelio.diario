@@ -208,19 +208,6 @@ def extract_donbosco_gospel(html):
 
     return evangelista, cita, evangelio
 
-raise RuntimeError(
-    "No pude localizar la cita bíblica en Don Bosco."
-)
-
-
-Path("debug_donbosco.html").write_text(
-    html,
-    encoding="utf-8"
-)
-
-print("HTML guardado en debug_donbosco.html")
-``
-
 def extract_evangeli_thoughts(html):
     soup = BeautifulSoup(html, 'html.parser')
     heading = next((t for t in soup.find_all(['h2', 'h3', 'h4'])
@@ -254,7 +241,10 @@ def extract_evangeli_thoughts(html):
 
 def make_html(output, evangelista, cita, evangelio, pensamientos):
     bloques = [b.strip() for b in evangelio.split('\n\n') if b.strip()]
-    evangelio_html = '\n'.join(f'<p>{escape(b)}</p>' for b in bloques)
+    evangelio_html = '\n'.join(
+    f'<p>{escape(b)}</p>'
+    for b in bloques
+    )
     pensamientos_html = '\n'.join(
         f'<div class="thought"><span class="bullet">•</span><p>{escape(p)}</p></div>'
         for p in pensamientos
@@ -267,7 +257,10 @@ def make_html(output, evangelista, cita, evangelio, pensamientos):
         f'\n\n*Pensamientos para el Evangelio de hoy*'
         f'\n\n' + '\n\n'.join(f'• {p}' for p in pensamientos)
     )
-    whatsapp_url = 'https://api.whatsapp.com/send?text=' + quote(mensaje_whatsapp, safe='')
+    whatsapp_url = (
+    "https://api.whatsapp.com/send?text="
+    + quote(mensaje_whatsapp, safe="")
+    )
 
     html = f'''<!doctype html>
 <html lang="es">
