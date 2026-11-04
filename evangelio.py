@@ -39,21 +39,33 @@ def fetch(url):
 
 def parse_spanish_date(text, with_de):
     day = r'(?:lunes|martes|miércoles|miercoles|jueves|viernes|sábado|sabado|domingo)'
+
     if with_de:
-        pattern = day + r'\s+(\d{1,2})\s+de\s+([A-Za-záéíóúñ]+)\s+de\s+(\d{4})'
+        pattern = (
+            day
+            + r'\s+(\d{1,2})\s+de\s+([A-Za-záéíóúñ]+)\s+de\s+(\d{4})'
+        )
     else:
-        pattern = day + r'\s+(\d{1,2})\s+([A-Za-záéíóúñ]+)\s+(\d{4})'
-    m = re.search(
-    r"\b(Mt|Mc|Lc|Jn)\.?\s*(\d+\s*,\s*[\d\-–]+)",
-    texto,
-    re.I,
-    )
+        pattern = (
+            day
+            + r'\s+(\d{1,2})\s+([A-Za-záéíóúñ]+)\s+(\d{4})'
+        )
+
+    m = re.search(pattern, text, re.I)
+
     if not m:
         return None
+
     month = MESES.get(m.group(2).lower())
+
     if not month:
         return None
-    return datetime(int(m.group(3)), month, int(m.group(1))).date()
+
+    return datetime(
+        int(m.group(3)),
+        month,
+        int(m.group(1))
+    ).date()
 
 
 def extract_donbosco_date(html):
