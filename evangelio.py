@@ -145,7 +145,7 @@ def extract_donbosco_gospel(html):
                 print(repr(texto[:150]))
                 contador += 1
 
-           if contador >= 20:
+            if contador >= 20:
                 break
 
         raise RuntimeError(
