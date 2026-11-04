@@ -206,7 +206,7 @@ def extract_donbosco_gospel(html):
             continue
 
         if not texto:
-        continue
+            continue
 
         if texto == referencia_texto:
             continue
