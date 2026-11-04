@@ -337,29 +337,29 @@ def extract_donbosco_gospel(html):
         if len(texto) < 10:
             continue
         
-        # Saltar fecha
+        # Saltar fecha sola
         if re.match(
-            r"^(lunes|martes|miércoles|miercoles|jueves|viernes|sábado|sabado|domingo)",
+            r"^(lunes|martes|miércoles|miercoles|jueves|viernes|sábado|sabado|domingo)$",
             texto.lower()
         ):
             continue
         
-        # Saltar cita sola
+        # Saltar referencias bíblicas solas
         if re.fullmatch(
             r"(Mt|Mc|Lc|Jn)\.?\s*\d+\s*,\s*[\d\-–]+",
             texto,
-            re.I
-            ):
-        continue
-
+            re.I,
+        ):
+            continue
+        
         print("AGREGANDO:", repr(texto[:80]))
         
         if texto not in paragraphs:
             paragraphs.append(texto)
-
-    evangelio = "\n\n".join(paragraphs).strip()
-
-    if len(evangelio) < 80:
+    
+        evangelio = "\n\n".join(paragraphs).strip()
+    
+        if len(evangelio) < 80:
 
         print("\n=== EVANGELIO EXTRAÍDO ===")
         print(evangelio)
@@ -368,7 +368,7 @@ def extract_donbosco_gospel(html):
             "El Evangelio extraído de Don Bosco parece incompleto."
         )
 
-    return evangelista, cita, evangelio
+        return evangelista, cita, evangelio
 
 def extract_evangeli_thoughts(html):
     soup = BeautifulSoup(html, 'html.parser')
